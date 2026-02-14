@@ -33,6 +33,11 @@ const investorInquirySchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+    investorAmount: {
+      type: String,
+      trim: true,
+      required: [true, 'Investment amount is required'],
+    },
     status: {
       type: String,
       enum: ['pending', 'contacted', 'in-progress', 'approved', 'rejected'],

@@ -13,6 +13,7 @@ import vendorTypeRoutes from './routes/vendorType.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 import franchiseInquiryRoutes from './routes/franchiseInquiry.routes.js';
+import investorInquiryRoutes from './routes/investorInquiry.routes.js';
 
 dotenv.config();
 
@@ -51,6 +52,9 @@ app.use('/api/notifications', notificationRoutes);
 
 // Franchise inquiry routes
 app.use('/api/franchise-inquiry', franchiseInquiryRoutes);
+
+// Investor inquiry routes
+app.use('/api/investor-inquiry', investorInquiryRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

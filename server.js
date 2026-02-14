@@ -12,6 +12,7 @@ import formConfigRoutes from './routes/formConfig.routes.js';
 import vendorTypeRoutes from './routes/vendorType.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
+import franchiseInquiryRoutes from './routes/franchiseInquiry.routes.js';
 
 dotenv.config();
 
@@ -47,6 +48,9 @@ app.use('/api/payments', paymentRoutes);
 
 // Notification routes
 app.use('/api/notifications', notificationRoutes);
+
+// Franchise inquiry routes
+app.use('/api/franchise-inquiry', franchiseInquiryRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

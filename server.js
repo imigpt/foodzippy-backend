@@ -65,6 +65,15 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Root handler (useful for platform health checks)
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'FoodZippy backend is up',
+    routes: ['/health', '/api/*'],
+  });
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({

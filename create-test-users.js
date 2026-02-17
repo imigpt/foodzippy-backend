@@ -1,18 +1,21 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import User from './models/User.js';
 import bcrypt from 'bcryptjs';
 
+dotenv.config();
+
 const createTestUsers = async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/foodzippy');
-    console.log('Connected to MongoDB');
+    const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/foodzippy';
+    await mongoose.connect(uri);
+    console.log('Connected to MongoDB:', uri.startsWith('mongodb://localhost') ? 'local' : 'remote');
     
-    // Create a test agent
-    const agentPassword = await bcrypt.hash('agent123', 10);
+    // Create a test agent (provide plain password so pre-save hook hashes it once)
     const testAgent = new User({
       name: 'Test Agent',
       username: 'testagent',
-      password: agentPassword,
+      password: 'agent123',
       phone: '1111111111',
       role: 'agent',
       isActive: true
@@ -21,11 +24,10 @@ const createTestUsers = async () => {
     console.log('✅ Test agent created: username=testagent, password=agent123');
     
     // Create a test employee
-    const employeePassword = await bcrypt.hash('employee123', 10);
     const testEmployee = new User({
       name: 'Test Employee',
       username: 'testemployee',
-      password: employeePassword,
+      password: 'employee123',
       phone: '2222222222',
       role: 'employee',
       isActive: true
@@ -34,11 +36,10 @@ const createTestUsers = async () => {
     console.log('✅ Test employee created: username=testemployee, password=employee123');
     
     // Also recreate the bhairavam12 employee
-    const bhairavPassword = await bcrypt.hash('password123', 10);
     const bhairavam = new User({
       name: 'Bhairavam',
       username: 'bhairavam12',
-      password: bhairavPassword,
+      password: 'password123',
       phone: '1234567890',
       role: 'employee',
       isActive: true

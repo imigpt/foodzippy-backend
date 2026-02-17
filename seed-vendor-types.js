@@ -1,7 +1,11 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import VendorType from './models/VendorType.js';
 import VendorFormConfig from './models/VendorFormConfig.js';
 import VendorFormSection from './models/VendorFormSection.js';
+
+// Load environment variables
+dotenv.config();
 
 // ==========================================
 // SEED VENDOR TYPES
@@ -51,7 +55,7 @@ const vendorTypes = [
 
 async function seedVendorTypes() {
   try {
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/foodzippy');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/foodzippy');
     console.log('✅ Connected to MongoDB');
 
     // Clear existing vendor types

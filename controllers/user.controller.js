@@ -3,6 +3,8 @@ import Vendor from '../models/Vendor.js';
 import jwt from 'jsonwebtoken';
 import cloudinary from '../config/cloudinary.js';
 import { createFollowUpNotification } from './notification.controller.js';
+import { sendEmail } from '../config/smtp.js';
+import { userWelcomeEmail } from '../config/emailTemplates.js';
 
 // Generate JWT Token
 const generateToken = (userId, userName, role) => {
@@ -164,6 +166,15 @@ export const createUser = async (req, res) => {
       password,
       role,
     });
+
+    // Send welcome email with credentials if user has email
+    const userEmail = req.body.email;
+    if (userEmail) {
+      sendEmail({
+        to: userEmail,
+        ...userWelcomeEmail({ name, username: username.toLowerCase(), password, role }),
+      }).catch(() => {});
+    }
 
     res.status(201).json({
       success: true,

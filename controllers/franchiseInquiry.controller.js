@@ -1,4 +1,6 @@
 import FranchiseInquiry from '../models/FranchiseInquiry.js';
+import { sendEmail } from '../config/smtp.js';
+import { franchiseInquiryReceived, franchiseStatusUpdate, adminNewSubmissionNotice } from '../config/emailTemplates.js';
 
 // @desc    Create a new franchise inquiry
 // @route   POST /api/franchise-inquiry
@@ -22,6 +24,21 @@ export const createFranchiseInquiry = async (req, res) => {
       phone,
       description,
     });
+
+    // Send confirmation email to inquirer (non-blocking)
+    sendEmail({
+      to: email,
+      ...franchiseInquiryReceived({ name }),
+    }).catch(() => {});
+
+    // Notify admin
+    const adminEmail = process.env.SMTP_USER;
+    if (adminEmail) {
+      sendEmail({
+        to: adminEmail,
+        ...adminNewSubmissionNotice({ type: 'Franchise Inquiry', name, email, details: description }),
+      }).catch(() => {});
+    }
 
     res.status(201).json({
       success: true,
@@ -145,6 +162,14 @@ export const updateFranchiseInquiry = async (req, res) => {
         success: false,
         message: 'Franchise inquiry not found',
       });
+    }
+
+    // Send status update email if status changed
+    if (status && inquiry.email) {
+      sendEmail({
+        to: inquiry.email,
+        ...franchiseStatusUpdate({ name: inquiry.name, status }),
+      }).catch(() => {});
     }
 
     res.status(200).json({

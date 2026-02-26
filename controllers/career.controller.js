@@ -1,4 +1,6 @@
 import CareerApplication from '../models/CareerApplication.js';
+import { sendEmail } from '../config/smtp.js';
+import { careerApplicationReceived, careerStatusUpdate, adminNewSubmissionNotice } from '../config/emailTemplates.js';
 
 // @desc    Submit a career application
 // @route   POST /api/careers/apply
@@ -24,6 +26,21 @@ export const createCareerApplication = async (req, res) => {
       // resumeUrl can be added later if Cloudinary upload is wired up
       resumeUrl: '',
     });
+
+    // Send confirmation email to applicant (non-blocking)
+    sendEmail({
+      to: email,
+      ...careerApplicationReceived({ fullName, position, city }),
+    }).catch(() => {});
+
+    // Notify admin about new application
+    const adminEmail = process.env.SMTP_USER;
+    if (adminEmail) {
+      sendEmail({
+        to: adminEmail,
+        ...adminNewSubmissionNotice({ type: 'Career Application', name: fullName, email, details: `Position: ${position}, City: ${city}` }),
+      }).catch(() => {});
+    }
 
     res.status(201).json({
       success: true,
@@ -128,6 +145,14 @@ export const updateCareerApplication = async (req, res) => {
 
     if (!application) {
       return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+
+    // Send status update email if status changed and applicant has email
+    if (status && application.email) {
+      sendEmail({
+        to: application.email,
+        ...careerStatusUpdate({ fullName: application.fullName, position: application.position, status }),
+      }).catch(() => {});
     }
 
     res.status(200).json({

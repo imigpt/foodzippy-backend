@@ -1,4 +1,6 @@
 import InvestorInquiry from '../models/InvestorInquiry.js';
+import { sendEmail } from '../config/smtp.js';
+import { investorInquiryReceived, investorStatusUpdate, adminNewSubmissionNotice } from '../config/emailTemplates.js';
 
 // @desc    Create a new investor inquiry
 // @route   POST /api/investor-inquiry
@@ -24,6 +26,21 @@ export const createInvestorInquiry = async (req, res) => {
       state,
       companyName: companyName || '',
     });
+
+    // Send confirmation email to inquirer (non-blocking)
+    sendEmail({
+      to: email,
+      ...investorInquiryReceived({ name }),
+    }).catch(() => {});
+
+    // Notify admin
+    const adminEmail = process.env.SMTP_USER;
+    if (adminEmail) {
+      sendEmail({
+        to: adminEmail,
+        ...adminNewSubmissionNotice({ type: 'Investor Inquiry', name, email, details: `City: ${city}, State: ${state}${companyName ? ', Company: ' + companyName : ''}` }),
+      }).catch(() => {});
+    }
 
     res.status(201).json({
       success: true,
@@ -156,6 +173,14 @@ export const updateInvestorInquiry = async (req, res) => {
         success: false,
         message: 'Investor inquiry not found',
       });
+    }
+
+    // Send status update email if status changed
+    if (status && inquiry.email) {
+      sendEmail({
+        to: inquiry.email,
+        ...investorStatusUpdate({ name: inquiry.name, status }),
+      }).catch(() => {});
     }
 
     res.status(200).json({

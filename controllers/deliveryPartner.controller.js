@@ -1,6 +1,7 @@
 import DeliveryPartner from '../models/DeliveryPartner.js';
 import EmailTemplate from '../models/EmailTemplate.js';
 import { sendEmail } from '../config/smtp.js';
+import { deliveryPartnerApplicationReceived, deliveryPartnerRejected, adminNewSubmissionNotice } from '../config/emailTemplates.js';
 import bcrypt from 'bcryptjs';
 
 // @desc    Submit delivery partner application (public)
@@ -37,6 +38,21 @@ export const applyDeliveryPartner = async (req, res) => {
       email: email.toLowerCase(),
       address,
     });
+
+    // Send confirmation email to applicant (non-blocking)
+    sendEmail({
+      to: email.toLowerCase(),
+      ...deliveryPartnerApplicationReceived({ fullName }),
+    }).catch(() => {});
+
+    // Notify admin
+    const adminEmail = process.env.SMTP_USER;
+    if (adminEmail) {
+      sendEmail({
+        to: adminEmail,
+        ...adminNewSubmissionNotice({ type: 'Delivery Partner Application', name: fullName, email, details: `Phone: ${phone}, Address: ${address}` }),
+      }).catch(() => {});
+    }
 
     res.status(201).json({
       success: true,
@@ -224,6 +240,14 @@ export const rejectDeliveryPartner = async (req, res) => {
     dp.status = 'Rejected';
     dp.rejectionReason = reason || '';
     await dp.save();
+
+    // Send rejection email (non-blocking)
+    if (dp.email) {
+      sendEmail({
+        to: dp.email,
+        ...deliveryPartnerRejected({ fullName: dp.fullName, reason }),
+      }).catch(() => {});
+    }
 
     res.status(200).json({ success: true, message: 'Application rejected', data: dp });
   } catch (error) {

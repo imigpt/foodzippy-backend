@@ -14,6 +14,11 @@ import paymentRoutes from './routes/payment.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 import franchiseInquiryRoutes from './routes/franchiseInquiry.routes.js';
 import investorInquiryRoutes from './routes/investorInquiry.routes.js';
+import careerRoutes from './routes/career.routes.js';
+import subscriberRoutes from './routes/subscriber.routes.js';
+import emailDraftRoutes from './routes/emailDraft.routes.js';
+import deliveryPartnerRoutes from './routes/deliveryPartner.routes.js';
+import emailTemplateRoutes from './routes/emailTemplate.routes.js';
 
 dotenv.config();
 
@@ -27,7 +32,7 @@ connectDB();
 app.use(cors({
   origin: process.env.CORS_ORIGIN || '*',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
@@ -60,6 +65,21 @@ app.use('/api/franchise-inquiry', franchiseInquiryRoutes);
 
 // Investor inquiry routes
 app.use('/api/investor-inquiry', investorInquiryRoutes);
+
+// Career application routes
+app.use('/api/careers', careerRoutes);
+
+// Subscriber routes
+app.use('/api/subscribers', subscriberRoutes);
+
+// Email draft routes
+app.use('/api/email-drafts', emailDraftRoutes);
+
+// Delivery partner routes
+app.use('/api/delivery-partners', deliveryPartnerRoutes);
+
+// Email template routes
+app.use('/api/email-templates', emailTemplateRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

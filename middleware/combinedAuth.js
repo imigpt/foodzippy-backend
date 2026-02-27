@@ -21,7 +21,7 @@ const combinedAuth = async (req, res, next) => {
     const token = authHeader.split(' ')[1];
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-change-this');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Check if it's a User token (new system)
     if (decoded.userId) {

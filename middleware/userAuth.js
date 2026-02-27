@@ -15,7 +15,7 @@ const userAuth = async (req, res, next) => {
     const token = authHeader.split(' ')[1];
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-change-this');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Check if user exists and is active
     const user = await User.findById(decoded.userId);

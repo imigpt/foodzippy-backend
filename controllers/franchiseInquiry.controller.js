@@ -29,7 +29,7 @@ export const createFranchiseInquiry = async (req, res) => {
     sendEmail({
       to: email,
       ...franchiseInquiryReceived({ name }),
-    }).catch(() => {});
+    }).catch((err) => console.error('Email send failed:', err.message));
 
     // Notify admin
     const adminEmail = process.env.SMTP_USER;
@@ -37,7 +37,7 @@ export const createFranchiseInquiry = async (req, res) => {
       sendEmail({
         to: adminEmail,
         ...adminNewSubmissionNotice({ type: 'Franchise Inquiry', name, email, details: description }),
-      }).catch(() => {});
+      }).catch((err) => console.error('Email send failed:', err.message));
     }
 
     res.status(201).json({
@@ -169,7 +169,7 @@ export const updateFranchiseInquiry = async (req, res) => {
       sendEmail({
         to: inquiry.email,
         ...franchiseStatusUpdate({ name: inquiry.name, status }),
-      }).catch(() => {});
+      }).catch((err) => console.error('Email send failed:', err.message));
     }
 
     res.status(200).json({

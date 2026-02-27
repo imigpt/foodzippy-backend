@@ -46,7 +46,7 @@ export const subscribe = async (req, res) => {
           </p>
         </div>
       `,
-    }).catch(() => {});
+    }).catch((err) => console.error('Email send failed:', err.message));
 
     res.status(201).json({ success: true, message: 'Subscribed successfully' });
   } catch (error) {

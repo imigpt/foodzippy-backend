@@ -31,7 +31,7 @@ export const createCareerApplication = async (req, res) => {
     sendEmail({
       to: email,
       ...careerApplicationReceived({ fullName, position, city }),
-    }).catch(() => {});
+    }).catch((err) => console.error('Email send failed:', err.message));
 
     // Notify admin about new application
     const adminEmail = process.env.SMTP_USER;
@@ -39,7 +39,7 @@ export const createCareerApplication = async (req, res) => {
       sendEmail({
         to: adminEmail,
         ...adminNewSubmissionNotice({ type: 'Career Application', name: fullName, email, details: `Position: ${position}, City: ${city}` }),
-      }).catch(() => {});
+      }).catch((err) => console.error('Email send failed:', err.message));
     }
 
     res.status(201).json({
@@ -152,7 +152,7 @@ export const updateCareerApplication = async (req, res) => {
       sendEmail({
         to: application.email,
         ...careerStatusUpdate({ fullName: application.fullName, position: application.position, status }),
-      }).catch(() => {});
+      }).catch((err) => console.error('Email send failed:', err.message));
     }
 
     res.status(200).json({

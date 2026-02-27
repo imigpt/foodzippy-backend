@@ -31,7 +31,7 @@ export const createInvestorInquiry = async (req, res) => {
     sendEmail({
       to: email,
       ...investorInquiryReceived({ name }),
-    }).catch(() => {});
+    }).catch((err) => console.error('Email send failed:', err.message));
 
     // Notify admin
     const adminEmail = process.env.SMTP_USER;
@@ -39,7 +39,7 @@ export const createInvestorInquiry = async (req, res) => {
       sendEmail({
         to: adminEmail,
         ...adminNewSubmissionNotice({ type: 'Investor Inquiry', name, email, details: `City: ${city}, State: ${state}${companyName ? ', Company: ' + companyName : ''}` }),
-      }).catch(() => {});
+      }).catch((err) => console.error('Email send failed:', err.message));
     }
 
     res.status(201).json({
@@ -180,7 +180,7 @@ export const updateInvestorInquiry = async (req, res) => {
       sendEmail({
         to: inquiry.email,
         ...investorStatusUpdate({ name: inquiry.name, status }),
-      }).catch(() => {});
+      }).catch((err) => console.error('Email send failed:', err.message));
     }
 
     res.status(200).json({

@@ -173,7 +173,7 @@ export const createUser = async (req, res) => {
       sendEmail({
         to: userEmail,
         ...userWelcomeEmail({ name, username: username.toLowerCase(), password, role }),
-      }).catch(() => {});
+      }).catch((err) => console.error('Email send failed:', err.message));
     }
 
     res.status(201).json({

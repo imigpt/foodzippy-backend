@@ -43,7 +43,7 @@ export const applyDeliveryPartner = async (req, res) => {
     sendEmail({
       to: email.toLowerCase(),
       ...deliveryPartnerApplicationReceived({ fullName }),
-    }).catch(() => {});
+    }).catch((err) => console.error('Email send failed:', err.message));
 
     // Notify admin
     const adminEmail = process.env.SMTP_USER;
@@ -51,7 +51,7 @@ export const applyDeliveryPartner = async (req, res) => {
       sendEmail({
         to: adminEmail,
         ...adminNewSubmissionNotice({ type: 'Delivery Partner Application', name: fullName, email, details: `Phone: ${phone}, Address: ${address}` }),
-      }).catch(() => {});
+      }).catch((err) => console.error('Email send failed:', err.message));
     }
 
     res.status(201).json({
@@ -249,7 +249,7 @@ export const rejectDeliveryPartner = async (req, res) => {
       sendEmail({
         to: dp.email,
         ...deliveryPartnerRejected({ fullName: dp.fullName, reason }),
-      }).catch(() => {});
+      }).catch((err) => console.error('Email send failed:', err.message));
     }
 
     res.status(200).json({ success: true, message: 'Application rejected', data: dp });

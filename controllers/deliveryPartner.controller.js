@@ -214,12 +214,15 @@ export const approveDeliveryPartner = async (req, res) => {
       </div>
     `;
 
-    // Send email (non-blocking)
-    sendEmail({ to: dp.email, subject, html: htmlContent }).catch(() => {});
+    // Send email and await result so we can report success/failure
+    const emailResult = await sendEmail({ to: dp.email, subject, html: htmlContent });
 
     res.status(200).json({
       success: true,
-      message: 'Application approved and credentials created',
+      message: emailResult.success
+        ? 'Application approved and credentials sent via email'
+        : `Application approved but email failed to send: ${emailResult.error}`,
+      emailSent: emailResult.success,
       data: dp,
     });
   } catch (error) {

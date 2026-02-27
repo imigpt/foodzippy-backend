@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: foodzippy-backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: CORS_ORIGIN
+        value: https://foodzippy-frontend.vercel.app,https://foodzippyadmin.vercel.app
+      - key: MONGODB_URI
+        sync: false   # Set this in Render Dashboard → Environment
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false   # Set foodzippyofficial@gmail.com in Render Dashboard
+      - key: SMTP_PASS
+        sync: false   # Set your Gmail App Password in Render Dashboard
+      - key: SMTP_FROM
+        sync: false   # Set: FoodZippy <foodzippyofficial@gmail.com>

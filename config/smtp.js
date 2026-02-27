@@ -11,11 +11,11 @@ const createTransporter = () => {
     return null;
   }
 
+  // Gmail App Password — standard STARTTLS config (no requireTLS needed)
   return nodemailer.createTransport({
     host,
     port,
-    secure: port === 465,      // true = SSL (port 465), false = STARTTLS (port 587)
-    requireTLS: port === 587,  // force STARTTLS upgrade on port 587 for all providers
+    secure: port === 465,  // true for port 465 (SSL), false for port 587 (STARTTLS)
     auth: { user, pass },
     tls: {
       rejectUnauthorized: false,

@@ -29,23 +29,12 @@ const PORT = process.env.PORT || 5000;
 // Connect to MongoDB
 await connectDB();
 
-// CORS — support multiple origins (frontend + admin)
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
-  : ['https://foodzippy-frontend.vercel.app', 'https://foodzippy-admin.vercel.app'];
-
+// CORS — reflect any requesting origin (works with credentials + all Vercel URLs)
 app.use(cors({
-  origin(origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, health checks)
-    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(null, true); // Allow all in production for now, log mismatches
-    }
-  },
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -23,6 +23,12 @@ const careerApplicationSchema = new mongoose.Schema(
       required: [true, 'Position is required'],
       trim: true,
     },
+    jobType: {
+      type: String,
+      required: [true, 'Job type is required'],
+      enum: ['full-time', 'part-time'],
+      trim: true,
+    },
     city: {
       type: String,
       required: [true, 'City is required'],
@@ -55,6 +61,7 @@ const careerApplicationSchema = new mongoose.Schema(
 careerApplicationSchema.index({ fullName: 1, email: 1, phone: 1 });
 careerApplicationSchema.index({ status: 1 });
 careerApplicationSchema.index({ position: 1 });
+careerApplicationSchema.index({ jobType: 1 });
 careerApplicationSchema.index({ createdAt: -1 });
 
 const CareerApplication = mongoose.model('CareerApplication', careerApplicationSchema);

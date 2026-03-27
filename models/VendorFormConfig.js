@@ -61,6 +61,13 @@ const VendorFormConfigSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    conditionalRequired: {
+      // Specifies which vendor types require this field
+      // If empty/null: follows the 'required' flag for all vendor types
+      // If array of vendor types: required only for those vendor types
+      type: [String],
+      default: null,
+    },
     order: {
       type: Number,
       required: true,

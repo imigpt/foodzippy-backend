@@ -51,6 +51,14 @@ const vendorTypes = [
     order: 5,
     isActive: true,
   },
+  {
+    name: 'Street',
+    slug: 'street',
+    description: 'Street food vendors and kiosks',
+    icon: 'map-pin',
+    order: 6,
+    isActive: true,
+  },
 ];
 
 async function seedVendorTypes() {

@@ -7,12 +7,12 @@ import { careerApplicationReceived, careerStatusUpdate, adminNewSubmissionNotice
 // @access  Public
 export const createCareerApplication = async (req, res) => {
   try {
-    const { fullName, email, phone, position, city, message } = req.body;
+    const { fullName, email, phone, position, jobType, city, message } = req.body;
 
-    if (!fullName || !email || !phone || !position || !city) {
+    if (!fullName || !email || !phone || !position || !jobType || !city) {
       return res.status(400).json({
         success: false,
-        message: 'Full name, email, phone, position and city are required',
+        message: 'Full name, email, phone, position, job type and city are required',
       });
     }
 
@@ -21,6 +21,7 @@ export const createCareerApplication = async (req, res) => {
       email,
       phone,
       position,
+      jobType,
       city,
       message: message || '',
       // resumeUrl can be added later if Cloudinary upload is wired up
@@ -38,7 +39,7 @@ export const createCareerApplication = async (req, res) => {
     if (adminEmail) {
       sendEmail({
         to: adminEmail,
-        ...adminNewSubmissionNotice({ type: 'Career Application', name: fullName, email, details: `Position: ${position}, City: ${city}` }),
+        ...adminNewSubmissionNotice({ type: 'Career Application', name: fullName, email, details: `Position: ${position}, Job Type: ${jobType}, City: ${city}` }),
       }).catch((err) => console.error('Email send failed:', err.message));
     }
 
@@ -62,12 +63,13 @@ export const createCareerApplication = async (req, res) => {
 // @access  Private (Admin)
 export const getAllCareerApplications = async (req, res) => {
   try {
-    const { status, position, search, page = 1, limit = 20 } = req.query;
+    const { status, position, jobType, search, page = 1, limit = 20 } = req.query;
 
     const query = {};
 
     if (status) query.status = status;
     if (position) query.position = { $regex: position, $options: 'i' };
+    if (jobType) query.jobType = jobType;
 
     if (search) {
       query.$or = [
@@ -75,6 +77,7 @@ export const getAllCareerApplications = async (req, res) => {
         { email: { $regex: search, $options: 'i' } },
         { phone: { $regex: search, $options: 'i' } },
         { position: { $regex: search, $options: 'i' } },
+        { jobType: { $regex: search, $options: 'i' } },
         { city: { $regex: search, $options: 'i' } },
       ];
     }

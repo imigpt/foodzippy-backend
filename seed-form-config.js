@@ -247,6 +247,19 @@ const fields = [
     visibleTo: ['agent', 'employee'],
     isActive: true,
   },
+  {
+    section: 'restaurant_info',
+    sectionLabel: 'Restaurant Information',
+    label: 'FSSI NO.',
+    fieldKey: 'fssiNo',
+    fieldType: 'text',
+    placeholder: 'e.g., 20821005000001',
+    required: false,
+    conditionalRequired: ['restaurant', 'cafe', 'hotel', 'bakery', 'sweet-shop'],
+    order: 13,
+    visibleTo: ['agent', 'employee'],
+    isActive: true,
+  },
 
   // ====== LOGIN INFO ======
   {

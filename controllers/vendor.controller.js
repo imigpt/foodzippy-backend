@@ -214,6 +214,72 @@ export const registerVendor = async (req, res) => {
   }
 };
 
+// @desc    Get all vendors (public, no auth required)
+// @route   GET /api/vendors
+// @access  Public
+export const getPublicVendors = async (req, res) => {
+  try {
+    const { vendorType, status, page = 1, limit = 50 } = req.query;
+
+    const query = {};
+    if (vendorType) query.vendorType = vendorType.toLowerCase();
+    if (status) query.restaurantStatus = status;
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const vendors = await Vendor.find(query)
+      .select('-__v')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await Vendor.countDocuments(query);
+
+    res.status(200).json({
+      success: true,
+      total,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      data: vendors,
+    });
+  } catch (error) {
+    console.error('Get public vendors error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch vendors',
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Get a single vendor by ID (public, no auth required)
+// @route   GET /api/vendors/:id
+// @access  Public
+export const getPublicVendorById = async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.params.id).select('-__v');
+
+    if (!vendor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Vendor not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: vendor,
+    });
+  } catch (error) {
+    console.error('Get public vendor by ID error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch vendor',
+      error: error.message,
+    });
+  }
+};
+
 // @desc    Get unread vendor requests count
 // @route   GET /api/admin/vendors/unread-count
 // @access  Private (Admin)
